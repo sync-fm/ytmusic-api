@@ -1,12 +1,15 @@
 {
-	"name": "ytmusic-api",
-	"version": "5.3.1",
+	"name": "@syncfm/ytmusic-api",
+	"version": "5.3.2",
 	"description": "YouTube Music API",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
 	"author": "xwxfox",
 	"license": "GPL-3.0",
+	"publishConfig": {
+		"access": "public"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/sync-fm/ytmusic-api"
