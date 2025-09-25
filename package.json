@@ -1,15 +1,15 @@
 {
 	"name": "ytmusic-api",
-	"version": "5.3.0",
+	"version": "5.3.1",
 	"description": "YouTube Music API",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
-	"author": "zS1L3NT <dev@zectan.com> (http://www.zectan.com)",
+	"author": "xwxfox",
 	"license": "GPL-3.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/zS1L3NT/ts-npm-ytmusic-api"
+		"url": "https://github.com/sync-fm/ytmusic-api"
 	},
 	"files": ["dist", "package.json"],
 	"exports": {
@@ -36,5 +36,5 @@
 		"typescript": "5.1",
 		"zod-to-json-schema": "^3.23.1"
 	},
-	"keywords": ["youtube", "music", "api"]
+	"keywords": ["youtube", "music", "api", "typescript"]
 }

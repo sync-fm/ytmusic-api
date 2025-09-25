@@ -6,6 +6,16 @@ import { traverse, traverseList, traverseString } from "../utils/traverse"
 export default class PlaylistParser {
 	public static parse(data: any, playlistId: string): PlaylistFull {
 		const artist = traverse(data, "tabs", "straplineTextOne")
+		let attemptedVideoCount: number | null = null
+		try {
+			attemptedVideoCount = +traverseList(data, "tabs", "secondSubtitle", "text")
+				.at(2)
+				.split(" ")
+				.at(0)
+				.replaceAll(",", "")
+		} catch {
+			attemptedVideoCount = null
+		}
 
 		return checkType(
 			{
@@ -16,12 +26,7 @@ export default class PlaylistParser {
 					name: traverseString(artist, "text"),
 					artistId: traverseString(artist, "browseId") || null,
 				},
-				videoCount:
-					+traverseList(data, "tabs", "secondSubtitle", "text")
-						.at(2)
-						.split(" ")
-						.at(0)
-						.replaceAll(",", "") ?? null,
+				videoCount: attemptedVideoCount ? attemptedVideoCount : 0,
 				thumbnails: traverseList(data, "tabs", "thumbnails"),
 			},
 			PlaylistFull,
