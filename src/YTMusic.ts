@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from "axios"
 import { Cookie, CookieJar } from "tough-cookie"
-
 import { FE_MUSIC_HOME } from "./constants"
 import AlbumParser from "./parsers/AlbumParser"
 import ArtistParser from "./parsers/ArtistParser"
@@ -158,9 +157,7 @@ export default class YTMusic {
 		}
 
 		const searchParams = new URLSearchParams({
-			...Object.fromEntries(
-        Object.entries(query).filter(([, value]) => value !== undefined)
-      ),
+			...Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined)),
 			alt: "json",
 			key: this.config.INNERTUBE_API_KEY!,
 		})
@@ -345,39 +342,43 @@ export default class YTMusic {
 		if (song.videoId !== videoId) throw new Error("Invalid videoId")
 		return song
 	}
-	
-  /**
-   * Get all possible information of a Up Nexts Song
-   *
-   * @param videoId Video ID
-   * @returns Up Nexts Data
-   */
-  
-  async getUpNexts(videoId: string): Promise<UpNextsDetails[]> {
-    if (!videoId.match(/^[a-zA-Z0-9-_]{11}$/)) throw new Error("Invalid videoId");
-  
-    const data = await this.constructRequest("next", {  
-      videoId, 
-      playlistId: `RDAMVM${videoId}`, 
-      isAudioOnly: true 
-    });
-  
-    const tabs = data?.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer?.watchNextTabbedResultsRenderer?.tabs[0]?.tabRenderer?.content?.musicQueueRenderer?.content?.playlistPanelRenderer?.contents;
-  
-    if (!tabs) throw new Error("Invalid response structure");
-  
-	return tabs.slice(1).map((item: any) => {
-      const { videoId, title, shortBylineText, lengthText, thumbnail } = item.playlistPanelVideoRenderer;
-      return {
-		type: "SONG",
-        videoId,
-        title: title?.runs[0]?.text || "Unknown",
-        artists: shortBylineText?.runs[0]?.text || "Unknown",
-        duration: lengthText?.runs[0]?.text || "Unknown",
-        thumbnail: thumbnail?.thumbnails.at(-1)?.url || "Unknown",
-      };
-    });
-  }
+
+	/**
+	 * Get all possible information of a Up Nexts Song
+	 *
+	 * @param videoId Video ID
+	 * @returns Up Nexts Data
+	 */
+
+	async getUpNexts(videoId: string): Promise<UpNextsDetails[]> {
+		if (!videoId.match(/^[a-zA-Z0-9-_]{11}$/)) throw new Error("Invalid videoId")
+
+		const data = await this.constructRequest("next", {
+			videoId,
+			playlistId: `RDAMVM${videoId}`,
+			isAudioOnly: true,
+		})
+
+		const tabs =
+			data?.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
+				?.watchNextTabbedResultsRenderer?.tabs[0]?.tabRenderer?.content?.musicQueueRenderer
+				?.content?.playlistPanelRenderer?.contents
+
+		if (!tabs) throw new Error("Invalid response structure")
+
+		return tabs.slice(1).map((item: any) => {
+			const { videoId, title, shortBylineText, lengthText, thumbnail } =
+				item.playlistPanelVideoRenderer
+			return {
+				type: "SONG",
+				videoId,
+				title: title?.runs[0]?.text || "Unknown",
+				artists: shortBylineText?.runs[0]?.text || "Unknown",
+				duration: lengthText?.runs[0]?.text || "Unknown",
+				thumbnail: thumbnail?.thumbnails.at(-1)?.url || "Unknown",
+			}
+		})
+	}
 
 	/**
 	 * Get all possible information of a Video
@@ -546,7 +547,9 @@ export default class YTMusic {
 			continuation = traverse(songsData, "continuation")
 		}
 
-		return songs.map(VideoParser.parsePlaylistVideo).filter((video): video is VideoDetailed => video !== undefined)
+		return songs
+			.map(VideoParser.parsePlaylistVideo)
+			.filter((video): video is VideoDetailed => video !== undefined)
 	}
 
 	/**

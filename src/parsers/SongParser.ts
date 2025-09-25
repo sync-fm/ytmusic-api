@@ -6,11 +6,24 @@ import Parser from "./Parser"
 
 export default class SongParser {
 	public static parse(data: any): SongFull {
+		let attemptedTitle: string | undefined = undefined
+		try {
+			attemptedTitle = traverseString(
+				data["microformat"],
+				"microformatDataRenderer",
+				"title",
+			).split(" - YouTube")[0]
+		} catch {
+			attemptedTitle = undefined
+		}
+
 		return checkType(
 			{
 				type: "SONG",
 				videoId: traverseString(data, "videoDetails", "videoId"),
-				name: traverseString(data, "videoDetails", "title"),
+				name: attemptedTitle
+					? attemptedTitle
+					: traverseString(data, "videoDetails", "title"),
 				artist: {
 					name: traverseString(data, "author"),
 					artistId: traverseString(data, "videoDetails", "channelId"),

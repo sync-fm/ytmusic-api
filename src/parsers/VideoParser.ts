@@ -6,10 +6,21 @@ import Parser from "./Parser"
 
 export default class VideoParser {
 	public static parse(data: any): VideoFull {
+		let attemptedTitle: string | undefined = undefined
+		try {
+			attemptedTitle = traverseString(
+				data["microformat"],
+				"microformatDataRenderer",
+				"title",
+			).split(" - YouTube")[0]
+		} catch {
+			attemptedTitle = undefined
+		}
+
 		return {
 			type: "VIDEO",
 			videoId: traverseString(data, "videoDetails", "videoId"),
-			name: traverseString(data, "videoDetails", "title"),
+			name: attemptedTitle ? attemptedTitle : traverseString(data, "videoDetails", "title"),
 			artist: {
 				artistId: traverseString(data, "videoDetails", "channelId"),
 				name: traverseString(data, "author"),
@@ -63,16 +74,18 @@ export default class VideoParser {
 		const duration = fixedcolumns.find(isDuration)
 
 		const videoId1: string = traverseString(item, "playNavigationEndpoint", "videoId")
-		const videoId2: string[] = traverseList(item, "thumbnails")[0].url.match(/https:\/\/i\.ytimg\.com\/vi\/(.+)\//,)
+		const videoId2: string[] = traverseList(item, "thumbnails")[0].url.match(
+			/https:\/\/i\.ytimg\.com\/vi\/(.+)\//,
+		)
 
-		if (videoId1 == '' && videoId2 == null) {
+		if (videoId1 == "" && videoId2 == null) {
 			return
 		}
 
 		return checkType(
 			{
 				type: "VIDEO",
-				videoId: videoId1 || videoId2[1] as string,
+				videoId: videoId1 || (videoId2[1] as string),
 				name: traverseString(title, "text"),
 				artist: {
 					name: traverseString(artist, "text"),
